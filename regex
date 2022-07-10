@@ -1,0 +1,2 @@
+/^(?<time>.*) \[(?<log_level>\w+)\] (?<pid>\d+).(?<tid>\d+): (?<message>.*), client: (?<client>[^ ]*), server: (?<server1>[^ ]*), request: "(?<mthd>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?", upstream: (?<upstream>.*), host: (?<host>[^ ]*)/
+

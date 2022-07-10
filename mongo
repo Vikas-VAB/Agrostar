@@ -1,0 +1,505 @@
+db.addcreateUser({ user: "dbadmin", pwd: "as2d2p, roles: [ "userAdmin" ]})
+
+db.grantRolesToUser('user1', ['readWriteAnyDatabase']);
+
+sudo growpart /dev/nvme0n1 1
+sudo resize2fs /dev/nvme0n1p1
+
+
+
+
+
+
+upstream assignment {
+    server 35.244.9.100;
+   
+    keepalive 8;
+}
+server {
+    listen 80 default;
+    server_name stagingagroex.agrostar.in;
+    
+#    location ~ /apigateway {
+#        proxy_pass http://localhost:9892;
+#        proxy_set_header Host $host;
+#    }
+    
+    #return 301 https://$host$request_uri;
+}
+
+server {
+    #listen 443 ssl;
+    listen 80 default;
+    server_name http://52.74.100.64/;
+    #ssl_certificate /opt/agrostarSSL/fullchain.pem;
+    #ssl_certificate_key /opt/agrostarSSL/privkey.pem;
+
+    location  / {
+         alias /home/ubuntu/lmd-new-ui/dist/;
+    }
+    
+    location /v2/ {
+        alias /home/ubuntu/lmd-new-ui/dist/;
+    }
+
+    location /staticv2/ {
+       alias /home/ubuntu/lmd-new-ui/dist/;
+    }
+
+    
+   
+}
+
+server {
+    
+    #listen 443 ssl;
+    #listen 80 default;
+    server_name http://52.74.100.64/;;
+    
+    #ssl_certificate /opt/agrostarSSL/fullchain.pem;
+    #ssl_certificate_key /opt/agrostarSSL/privkey.pem;
+    
+    location ~ /deploy {
+        proxy_pass http://localhost:6006;
+        proxy_set_header Host $host;
+        client_max_body_size 20M;
+    }   
+    location ~ /thirdpartyservice/ {
+        proxy_pass http://localhost:4041;
+        proxy_set_header Host $host;
+    }
+    location /invoiceprintservice_static/ {
+        autoindex on;
+        alias /root/;
+    }
+    location ~ /agroexviewservice/ {
+        proxy_pass http://localhost:4040;
+        proxy_set_header Host $host;
+    } 
+
+    location ^~ /agroextracking/ {
+        rewrite /agroextracking/(.*) /$1  break;
+        proxy_pass http://localhost:3000/;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /returnlogistics/ {
+        proxy_pass http://localhost:5057;
+        proxy_set_header Host $host;
+    }
+
+
+
+    location ~ /agroexuserservice/ {
+        proxy_pass http://localhost:2003;
+        proxy_set_header Host $host;
+    }
+    location ~ /ticketservice/ {
+        proxy_pass http://0.0.0.0:2004;
+        proxy_set_header Host $host;
+    }
+    location ~ /analyticsapi/ {
+        proxy_pass http://localhost:2000;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /leadservice/ {
+        proxy_pass http://localhost:2001;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /packageservice/ {
+        proxy_pass http://localhost:9890;
+        proxy_set_header Host $host;
+    }
+    location ~ /paymentapi {
+        proxy_pass http://localhost:9857;
+        proxy_set_header Host $host;
+    }
+    location ~ /apigateway/ {
+        proxy_pass http://localhost:9892;
+        proxy_set_header Host $host;
+    }
+    location ~ /payoutservice/{
+        proxy_pass http://localhost:4042;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /incentiveservice/{
+        proxy_pass http://localhost:4043;
+        proxy_set_header Host $host;
+    }
+    
+    location ~ /assignmentservice/{
+        proxy_pass http://localhost:9896;
+        #proxy_pass http://assignment;
+        proxy_set_header Host $host;
+    }    
+    location ~ /unicommercewrapper/ {
+        proxy_pass http://127.0.0.1:4240;
+        proxy_set_header Host $http_host;
+    }
+
+    location ~ /invoiceprintservice/ {
+        proxy_pass http://127.0.0.1:9898;
+        proxy_set_header Host $http_host;
+    }
+    location ~ /node/ {
+        proxy_pass http://127.0.0.1:3535;
+        proxy_set_header Host $http_host;
+    }
+    location ~ /notificationservice/ {
+        proxy_pass http://localhost:9861;
+        proxy_set_header Host $host;
+    }
+   
+    location ~ /returnreasonservice/ {
+    	proxy_pass http://localhost:9862;
+        proxy_set_header Host $host;
+    }    
+    #location ~ /agroexnotifications/ {
+   # 	proxy_pass http://localhost:4000;
+   #     proxy_set_header Host $host;
+   # }    
+
+    location ~ /api {
+        proxy_pass http://localhost:9842;
+        proxy_set_header Host $host;
+    }
+    location  /exlite/ {
+        proxy_pass http://0.0.0.0:3030;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /ex/ {
+        proxy_pass http://localhost:8999;
+        proxy_set_header Host $host;
+    }
+
+    location ~ /agroexnotifications/ {
+        proxy_pass http://localhost:7978;
+        proxy_set_header Host $host;
+    }
+
+    location /triggerservice/ {
+        proxy_pass http://localhost:7979;
+        proxy_set_header Host $host;
+    }
+
+    location  / {
+       # proxy_pass http://localhost:3000;
+       # proxy_set_header Host $http_host;
+         alias /root/lmd-ui/dist/;
+    }
+    location /report/ {
+        autoindex on;
+        alias /root/Reports/;
+    }
+
+    #location /exlite/ {
+    #    proxy_pass http://localhost:3000;
+    #    proxy_set_header Host $host;
+    #}
+    location /test.html {
+        alias /usr/share/nginx/html/test.html;
+    }
+
+    location  /downloads/ {
+        alias /var/www/;
+    }
+
+    location /static/ {
+        autoindex on;
+        alias /home/ubuntu/lastmiledeliveryui/static/;
+    }
+    location /admin/ {
+        proxy_pass http://0.0.0.0:8010;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+    }
+    location /v2/ {
+        alias /home/ubuntu/lmd-ui-v2/dist/;
+    }
+
+    location /staticv2/ {
+       alias /home/ubuntu/lmd-ui-v2/dist/;
+    }
+    location /v3/ {
+        alias /home/ubuntu/lmd-new-ui/dist/;
+    }
+
+    location /staticv3/ {
+       alias /home/ubuntu/lmd-new-ui/dist/;
+    }
+
+    location /node-static/ {
+       alias /home/ubuntu/invoice-challan-node-fork/static/;
+    }
+    location /basic_status {
+        stub_status on;
+    }
+}
+
+
+
+
+
+
+
+log_format trace 'address=$remote_addr - user=$remote_user time=[$time_local] request="$request" status=$status '
+'body_bytes=$body_bytes_sent referer="$http_referer" user_agent="$http_user_agent" '
+'forwarded="$http_x_forwarded_for" request_id=$uuid msec=$msec request_time=$request_time '
+'upstream_connect_time=$upstream_connect_time upstream_header_time=$upstream_header_time '
+'upstream_response_time=$upstream_response_time';
+
+map $http_x_request_id $uuid {
+	default "${request_id}";
+	~* "${http_x_request_id}";
+}
+
+server {
+	listen 443 ssl;
+        listen 80 default;
+	server_name test-agroex.agrostar.in;
+
+	ssl_certificate /opt/agrostarSSL/fullchain.pem;
+	ssl_certificate_key /opt/agrostarSSL/privkey.pem;
+
+	access_log /var/log/nginx/access_trace.log trace;
+
+	proxy_set_header X-Request-ID $uuid; 
+        proxy_redirect http://  https://;
+        # absolute_redirect off;
+
+	#
+ 	# Obsolete services
+	#
+
+	# location /deploy {
+		# proxy_pass http://localhost:6006;
+		# proxy_set_header Host $host;
+		# client_max_body_size 20M;
+	# }   
+	# location /thirdpartyservice/ {
+		# proxy_pass http://localhost:4041;
+		# proxy_set_header Host $host;
+	# }
+	# location ^~ /agroextracking/ {
+		# rewrite /agroextracking/(.*) /$1  break;
+		# proxy_pass http://localhost:3000/;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /agroexuserservice/ {
+		# proxy_pass http://localhost:2003;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /packageservice/ {
+		# proxy_pass http://localhost:9890;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /notificationservice/ {
+		# proxy_pass http://localhost:9861;
+		# proxy_set_header Host $host;
+	# }
+
+	# location  /exlite/ {
+		# proxy_pass http://0.0.0.0:3030;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /ex/ {
+		# proxy_pass http://localhost:8999;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /agroexnotifications/ {
+		# proxy_pass http://localhost:7978;
+		# proxy_set_header Host $host;
+	# }
+
+	# location /triggerservice/ {
+		# proxy_pass http://localhost:7979;
+		# proxy_set_header Host $host;
+	# }
+
+	location /admin/ {
+		proxy_pass http://0.0.0.0:8010;
+		proxy_set_header Host $host;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+
+	}
+
+	#
+	# Obsolete static folders (these folders don't exist)
+	#
+	# location /invoiceprintservice_static/ {
+		# autoindex on;
+		# alias /root/;
+	# }
+	# location /report/ {
+		# autoindex on;
+		# alias /root/Reports/;
+	# }
+
+	# unicommercewrapper
+	location /unicommercewrapper/ {
+		proxy_pass http://127.0.0.1:4240;
+		proxy_set_header Host $http_host;
+	}
+
+	# assignment_service
+	location /assignmentservice/{
+		proxy_pass http://localhost:9896;
+		proxy_set_header Host $host;
+	}    
+
+	# agroex_ticket_service
+	location /ticketservice/ {
+		proxy_pass http://0.0.0.0:2004;
+		proxy_set_header Host $host;
+	}
+
+	# agroexanalytics
+	location /analyticsapi/ {
+		proxy_pass http://localhost:2000;
+		proxy_set_header Host $host;
+	}
+
+	# agroexsupportservice
+	location /supportticketservice/ {
+		proxy_pass http://localhost:4031;
+		proxy_set_header Host $host;
+	}
+
+	# agroex_api_gateway
+	location /apigateway/ {
+		proxy_pass http://localhost:9892;
+		proxy_set_header Host $host;
+	}
+
+	# lmd_service_v2
+	location /api/ {
+		proxy_pass http://localhost:9842;
+		proxy_set_header Host $host;
+	}
+
+	# agroexviewservice
+	location /agroexviewservice/ {
+		proxy_pass http://localhost:4040;
+		proxy_set_header Host $host;
+	} 
+
+	# incentiveservice
+	location /incentiveservice/{
+		proxy_pass http://localhost:4043;
+		proxy_set_header Host $host;
+	}
+
+	# lead_service
+	location /leadservice/ {
+		proxy_pass http://localhost:2001;
+		proxy_set_header Host $host;
+	}
+
+	# return_reason_service
+	location /returnreasonservice/ {
+		proxy_pass http://localhost:9862;
+		proxy_set_header Host $host;
+	}    
+
+	# returnlogistics
+	location /returnlogistics/ {
+		proxy_pass http://localhost:5100;
+		proxy_set_header Host $host;
+	}
+
+	# agroexunipull has no listening ports
+
+	# invoice_print_service_new
+	location /invoiceprintservice/ {
+		proxy_pass http://localhost:9898;
+		proxy_set_header Host $http_host;
+	}
+
+	# agroex_payment_service
+	location /paymentapi/ {
+		proxy_pass http://localhost:9857;
+		proxy_set_header Host $host;
+	}
+
+	# payment_van_scripts has no listening ports
+
+	# agroexpayoutservice
+	location /payoutservice/ {
+		proxy_pass http://localhost:4042;
+		proxy_set_header Host $host;
+	}
+
+        # agroexreportservice
+        location /agroexreportservice/ {
+                proxy_pass http://localhost:8288;
+                proxy_set_header Host $host;
+        }
+
+	# driveupload
+	location /driveupload/ {
+		proxy_pass http://localhost:4044;
+		proxy_set_header Host $host;
+	}
+
+	# TODO
+	location /node/ {
+		proxy_pass http://127.0.0.1:3535;
+		proxy_set_header Host $http_host;
+	}
+
+	# Static files
+	location  / {
+		alias /home/ubuntu/lmd-new-ui/dist/;
+	}
+
+	location /test.html {
+		alias /usr/share/nginx/html/test.html;
+	}
+
+	location  /downloads/ {
+		alias /var/www/;
+	}
+
+	location /static/ {
+		autoindex on;
+		alias /home/ubuntu/lastmiledeliveryui-static/;
+	}
+
+	location /v1/ {
+		alias /home/ubuntu/lmd-new-ui/distv1/;
+	}
+
+	location /staticv2/ {
+		alias /home/ubuntu/lmd-ui-v2/dist/;
+	}
+	location /v2/ {
+		alias /home/ubuntu/lmd-ui-v2/dist/;
+	}
+
+	location /staticv3/ {
+		alias /home/ubuntu/lmd-new-ui/dist/;
+	}
+
+	location /node-static/ {
+		alias /home/ubuntu/invoice-challan-node-fork/static/;
+	}
+	location /basic_status {
+		stub_status on;
+	}
+     
+}
+

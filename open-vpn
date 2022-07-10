@@ -1,0 +1,11 @@
+Logon with devops-openvpn
+# And then navigate to /EasyRSA-3.0.8/pki/client-conf
+ Command:$ cd /EasyRSA-3.0.8/pki/client-conf
+# And generate conf file with username by using "gen-conf.sh"
+ Command:$ ./gen-conf.sh <username>
+ Example:$ ./gen-conf.sh mastan.rao
+# If we had any issuses while creating conf file by using above command then you may please use the below command
+ Command:$ easyrsa build-client-full mastan.rao nopass
+# And then again run the below command
+ Command:$ ./gen-conf.sh <username>
+# Download the conf file to your laptop and send it to the user.
